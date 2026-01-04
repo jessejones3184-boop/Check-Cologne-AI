@@ -1,0 +1,7 @@
+{
+  "name": "Check Cologne AI",
+  "description": "Professional AI-powered fragrance authentication and forensic lab.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
