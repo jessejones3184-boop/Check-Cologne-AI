@@ -1,6 +1,6 @@
 {
-  "name": "Check Cologne AI",
-  "description": "Professional AI-powered fragrance authentication and forensic lab.",
+  "name": "Genify app store",
+  "description": "Advanced AI-powered universal item authentication and verification system.",
   "requestFramePermissions": [
     "camera"
   ]

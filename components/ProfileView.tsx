@@ -1,82 +1,73 @@
+import React, { useState } from 'react';
+import { Zap, CreditCard, Star, Loader2, FlaskConical } from 'lucide-react';
+import { User as UserType } from '../types';
 
-import React from 'react';
-import { User, Zap, Settings, ShieldCheck, Lock, ChevronRight, Globe, Bell } from 'lucide-react';
+interface ProfileViewProps {
+  user: UserType | null;
+  onSubscribe: (priceType: 'single' | 'monthly') => void;
+}
 
-export const ProfileView: React.FC<{ count: number; isPro: boolean; onUpgrade: () => void; onBack: () => void }> = ({ count, isPro, onUpgrade }) => {
+export const ProfileView: React.FC<ProfileViewProps> = ({ user, onSubscribe }) => {
+  const [isLoading, setIsLoading] = useState<string | null>(null);
+
+  if (!user) {
+    return (
+      <div className="h-full bg-white flex items-center justify-center p-8 text-center">
+        <FlaskConical className="w-10 h-10 text-accent animate-pulse" />
+      </div>
+    );
+  }
+
+  const handleSubscribeClick = (type: 'single' | 'monthly') => {
+    setIsLoading(type);
+    onSubscribe(type);
+  };
+
   return (
-    <div className="h-full overflow-y-auto no-scrollbar bg-black safe-top flex flex-col">
-      <div className="px-6 py-12">
-        <div className="flex items-center gap-6 mb-10">
-           <div className="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-neutral-800 to-black border border-white/10 flex items-center justify-center shadow-2xl relative">
-              <User className="w-10 h-10 text-white/40" />
-              {isPro && (
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#00F2FF] rounded-full flex items-center justify-center border-4 border-black">
-                   <Zap className="w-3.5 h-3.5 text-black fill-black" />
-                </div>
-              )}
-           </div>
-           <div>
-              <div className={`px-2 py-0.5 rounded-full border text-[7px] font-black uppercase tracking-[0.2em] mb-2 inline-block ${isPro ? 'bg-[#00F2FF]/10 border-[#00F2FF]/30 text-[#00F2FF]' : 'bg-white/5 border-white/10 text-white/40'}`}>
-                 {isPro ? 'Pro Member' : 'Standard Tier'}
-              </div>
-              <h3 className="text-3xl font-black uppercase tracking-tighter leading-none">Scout <br/>Analyzer</h3>
-              <p className="text-white/20 text-[9px] font-bold uppercase tracking-[0.3em] mt-2">Node: 734-X9-Alpha</p>
-           </div>
+    <div className="h-full bg-white safe-top flex flex-col overflow-y-auto no-scrollbar pb-40">
+      <div className="px-8 py-12 text-center">
+        <div className="w-16 h-16 bg-slate-900 text-white rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-xl shadow-slate-900/20">
+          <Star className="w-8 h-8 text-cyan-400 fill-cyan-400" />
         </div>
+        <h1 className="text-3xl font-black uppercase tracking-tight mb-2 text-slate-900">Get More Scans</h1>
+        <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] leading-relaxed max-w-[250px] mx-auto">
+          Choose the plan that fits your needs. AI Authentication requires high computing power.
+        </p>
+      </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="bg-[#111] p-6 rounded-[2rem] border border-white/5">
-                <p className="text-[8px] font-black uppercase tracking-widest text-white/30 mb-2">Total Scans</p>
-                <p className="text-3xl font-black text-white">{count}</p>
-            </div>
-            <div className="bg-[#111] p-6 rounded-[2rem] border border-white/5">
-                <p className="text-[8px] font-black uppercase tracking-widest text-white/30 mb-2">Trust Score</p>
-                <p className="text-3xl font-black text-[#00F2FF]">99.8%</p>
-            </div>
-        </div>
-
-        {!isPro && (
+      <div className="px-8 space-y-4">
+        {/* Single Scan */}
+        <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 flex flex-col items-center text-center">
+          <h3 className="font-black text-sm uppercase tracking-wide mb-1 text-slate-900">Single Scan</h3>
+          <div className="text-3xl font-black tracking-tight mb-6 text-slate-900">$2.99</div>
           <button 
-            onClick={onUpgrade}
-            className="w-full p-8 rounded-[2.5rem] bg-[#00F2FF] text-black relative overflow-hidden group mb-10 shadow-[0_0_50px_-10px_rgba(0,242,255,0.3)]"
+            onClick={() => handleSubscribeClick('single')}
+            disabled={!!isLoading}
+            className="w-full py-5 bg-white border-2 border-slate-200 text-slate-900 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:border-slate-900 transition-all flex items-center justify-center gap-3 active:scale-95"
           >
-            <div className="relative z-10 text-left">
-              <div className="flex items-center gap-2 mb-2">
-                 <Zap className="w-4 h-4 fill-black" />
-                 <h4 className="text-xl font-black uppercase tracking-tighter">Upgrade to Pro</h4>
-              </div>
-              <p className="text-black/60 text-[9px] font-bold uppercase tracking-wider mb-6 max-w-[200px]">Unlimited Certificates & Forensic Deep-Scans.</p>
-              <div className="flex items-center gap-2">
-                 <span className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-black/10 rounded-lg">Get License</span>
-              </div>
-            </div>
-            <ShieldCheck className="absolute top-4 right-4 w-24 h-24 text-black/5 -rotate-12 group-hover:scale-110 transition-transform" />
+            {isLoading === 'single' ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
+            {isLoading === 'single' ? 'Processing...' : 'Buy 1 Scan'}
           </button>
-        )}
-
-        <div className="space-y-3 pb-40">
-           <p className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 px-4 mb-4">Account Control</p>
-           
-           {[
-             { icon: Settings, label: 'Preferences', value: 'System v3.1' },
-             { icon: Lock, label: 'Privacy & Security', value: 'Encrypted' },
-             { icon: Globe, label: 'Language', value: 'English (US)' },
-             { icon: Bell, label: 'Notifications', value: 'Enabled' }
-           ].map((item, i) => (
-             <button key={i} className="w-full p-6 bg-[#111] border border-white/5 rounded-[2rem] flex items-center justify-between group active:scale-[0.99] transition-all">
-                <div className="flex items-center gap-4">
-                   <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center group-hover:bg-[#00F2FF]/10 group-hover:text-[#00F2FF] transition-colors">
-                      <item.icon className="w-5 h-5" strokeWidth={1.5} />
-                   </div>
-                   <div className="text-left">
-                      <p className="text-xs font-black uppercase tracking-tight text-white">{item.label}</p>
-                      <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">{item.value}</p>
-                   </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-white/10 group-hover:text-white transition-colors" />
-             </button>
-           ))}
         </div>
+
+        {/* Unlimited Monthly */}
+        <div className="p-8 bg-slate-900 text-white rounded-[2.5rem] border border-slate-800 flex flex-col items-center text-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 bg-cyan-500 text-white text-[8px] font-black uppercase tracking-widest px-5 py-2 rounded-bl-2xl">Best Value</div>
+          <h3 className="font-black text-sm uppercase tracking-wide mb-1">Unlimited Pro</h3>
+          <div className="text-3xl font-black tracking-tight mb-6">$7.99<span className="text-[10px] text-slate-400">/mo</span></div>
+          <button 
+            onClick={() => handleSubscribeClick('monthly')}
+            disabled={!!isLoading}
+            className="w-full py-5 bg-cyan-500 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-cyan-400 transition-all flex items-center justify-center gap-3 shadow-lg shadow-cyan-500/20 active:scale-95"
+          >
+            {isLoading === 'monthly' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+            {isLoading === 'monthly' ? 'Processing...' : 'Go Unlimited'}
+          </button>
+        </div>
+
+        <p className="text-center text-[9px] text-slate-400 font-black uppercase tracking-widest px-8 pt-4">
+          Secure payments processed by Stripe. Cancel monthly anytime.
+        </p>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { LayoutGrid, History } from 'lucide-react';
+import { Home, History, User } from 'lucide-react';
 
-type MainView = 'home' | 'history';
+type MainView = 'home' | 'history' | 'profile';
 
 interface BottomMenuProps {
     activeTab: MainView;
@@ -11,35 +11,27 @@ interface BottomMenuProps {
 
 export const BottomMenu: React.FC<BottomMenuProps> = ({ activeTab, onTabChange }) => {
   return (
-    <div className="fixed bottom-8 left-6 right-6 z-40 animate-slide-up">
-        {/* Floating Glass Bar */}
-        <div className="ios-blur rounded-[2.5rem] p-2 flex justify-center items-center shadow-2xl border border-white/10 max-w-xs mx-auto gap-2">
-            
+    <div className="fixed bottom-8 left-8 right-8 z-40 animate-slide-up flex justify-center">
+        <div className="glass rounded-full px-4 py-2 flex items-center gap-2 shadow-xl shadow-slate-200/50">
             <button 
-                onClick={() => onTabChange('history')}
-                className={`flex-1 flex flex-col items-center justify-center py-4 rounded-[2rem] transition-all duration-300 relative overflow-hidden group ${activeTab === 'history' ? 'text-white' : 'text-white/30 hover:text-white/60'}`}
+                onClick={() => onTabChange('home')}
+                className={`flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 ${activeTab === 'home' ? 'text-accent bg-accent/5' : 'text-slate-300'}`}
             >
-                {activeTab === 'history' && (
-                    <div className="absolute inset-0 bg-white/10 rounded-[2rem] shadow-lg animate-fade-in" />
-                )}
-                
-                <div className="relative z-10 flex flex-col items-center">
-                    <History className={`w-5 h-5 mb-1 transition-transform duration-300 ${activeTab === 'history' ? 'scale-110' : 'group-hover:scale-110'}`} />
-                    <span className="text-[8px] font-black uppercase tracking-[0.2em]">Vault</span>
-                </div>
+                <Home className="w-6 h-6" />
             </button>
 
             <button 
-                onClick={() => onTabChange('home')}
-                className={`flex-1 flex flex-col items-center justify-center py-4 rounded-[2rem] transition-all duration-300 relative overflow-hidden group ${activeTab === 'home' ? 'text-[#00F2FF]' : 'text-white/30 hover:text-white/60'}`}
+                onClick={() => onTabChange('history')}
+                className={`flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 ${activeTab === 'history' ? 'text-accent bg-accent/5' : 'text-slate-300'}`}
             >
-                {activeTab === 'home' && (
-                    <div className="absolute inset-0 bg-[#00F2FF]/10 rounded-[2rem] shadow-lg animate-fade-in" />
-                )}
-                <div className="relative z-10 flex flex-col items-center">
-                    <LayoutGrid className={`w-5 h-5 mb-1 transition-transform duration-300 ${activeTab === 'home' ? 'scale-110' : 'group-hover:scale-110'}`} />
-                    <span className="text-[8px] font-black uppercase tracking-[0.2em]">Home</span>
-                </div>
+                <History className="w-6 h-6" />
+            </button>
+
+            <button 
+                onClick={() => onTabChange('profile')}
+                className={`flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 ${activeTab === 'profile' ? 'text-accent bg-accent/5' : 'text-slate-300'}`}
+            >
+                <User className="w-6 h-6" />
             </button>
         </div>
     </div>

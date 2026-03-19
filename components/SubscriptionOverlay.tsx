@@ -3,34 +3,16 @@ import React, { useState } from 'react';
 import { X, Zap, Star, ShieldCheck, Loader2, CreditCard, ArrowRight, RefreshCw } from 'lucide-react';
 
 interface SubscriptionOverlayProps {
-    onSubscribe: () => void;
+    onSubscribe: (priceType: 'single' | 'monthly') => void;
     onClose: () => void;
 }
 
 export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({ onSubscribe, onClose }) => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [isRestoring, setIsRestoring] = useState(false);
+    const [isLoading, setIsLoading] = useState<string | null>(null);
 
-    const handleSubscribeClick = () => {
-        setIsLoading(true);
-        // PayPal Payment Link
-        const PAYMENT_LINK = "https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-6HU036412F082824GNE7DYPY"; 
-        
-        window.open(PAYMENT_LINK, '_blank');
-        
-        // In a real app with a backend, we would listen for a webhook here.
-        // For this demo, we reset the loading state after a few seconds.
-        setTimeout(() => setIsLoading(false), 3000);
-    };
-
-    const handleRestorePurchase = () => {
-        setIsRestoring(true);
-        // Simulate checking a database/server for the user's subscription
-        setTimeout(() => {
-            setIsRestoring(false);
-            onSubscribe();
-            alert("Purchase Restored Successfully!");
-        }, 2000);
+    const handleSubscribeClick = (type: 'single' | 'monthly') => {
+        setIsLoading(type);
+        onSubscribe(type);
     };
 
     return (
@@ -44,7 +26,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({ onSubs
             {/* Modal Content */}
             <div className="bg-white w-full max-w-md m-4 rounded-[2rem] p-8 relative pointer-events-auto shadow-2xl transform transition-all animate-in slide-in-from-bottom duration-500 overflow-hidden">
                 {/* Decorative background blobs */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
 
                 <button 
@@ -56,70 +38,48 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({ onSubs
 
                 <div className="mb-8 text-center relative z-10">
                     <div className="w-16 h-16 bg-black text-white rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-xl shadow-black/20">
-                         <Star className="w-8 h-8 text-yellow-400 fill-yellow-400" />
+                         <Star className="w-8 h-8 text-cyan-400 fill-cyan-400" />
                     </div>
-                    <h2 className="text-3xl font-black uppercase tracking-tight mb-2">Limit Reached</h2>
+                    <h2 className="text-3xl font-black uppercase tracking-tight mb-2">Get More Scans</h2>
                     <p className="text-neutral-500 font-bold uppercase tracking-widest text-xs leading-relaxed max-w-[250px] mx-auto">
-                        You've used your 3 free scans. Upgrade to Pro to continue.
+                        Choose the plan that fits your needs. AI Authentication requires high computing power.
                     </p>
                 </div>
 
-                <div className="space-y-4 mb-8 relative z-10">
-                    <div className="flex items-center gap-4 p-4 bg-neutral-50 rounded-xl border border-neutral-100">
-                        <div className="p-2 bg-black rounded-lg">
-                            <Zap className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                            <h3 className="font-black text-sm uppercase tracking-wide">Unlimited Scans</h3>
-                            <p className="text-xs text-neutral-400 font-medium">No daily or monthly limits</p>
-                        </div>
+                <div className="grid grid-cols-1 gap-4 mb-8 relative z-10">
+                    {/* Single Scan */}
+                    <div className="p-6 bg-neutral-50 rounded-2xl border border-neutral-100 flex flex-col items-center text-center">
+                        <h3 className="font-black text-sm uppercase tracking-wide mb-1">Single Scan</h3>
+                        <div className="text-2xl font-black tracking-tight mb-4">$2.99</div>
+                        <button 
+                            onClick={() => handleSubscribeClick('single')}
+                            disabled={!!isLoading}
+                            className="w-full py-3 bg-white border-2 border-neutral-200 text-black rounded-xl font-bold uppercase tracking-widest text-[10px] hover:border-black transition-all flex items-center justify-center gap-2"
+                        >
+                            {isLoading === 'single' ? <Loader2 className="w-3 h-3 animate-spin" /> : <CreditCard className="w-3 h-3" />}
+                            {isLoading === 'single' ? 'Processing...' : 'Buy 1 Scan'}
+                        </button>
                     </div>
-                     <div className="flex items-center gap-4 p-4 bg-neutral-50 rounded-xl border border-neutral-100">
-                        <div className="p-2 bg-black rounded-lg">
-                            <ShieldCheck className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                            <h3 className="font-black text-sm uppercase tracking-wide">Pro Analytics</h3>
-                            <p className="text-xs text-neutral-400 font-medium">Detailed valuation & legit checks</p>
-                        </div>
+
+                    {/* Unlimited Monthly */}
+                    <div className="p-6 bg-slate-900 text-white rounded-2xl border border-slate-800 flex flex-col items-center text-center relative overflow-hidden">
+                        <div className="absolute top-0 right-0 bg-cyan-500 text-white text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-lg">Best Value</div>
+                        <h3 className="font-black text-sm uppercase tracking-wide mb-1">Unlimited Pro</h3>
+                        <div className="text-2xl font-black tracking-tight mb-4">$7.99<span className="text-[10px] text-slate-400">/mo</span></div>
+                        <button 
+                            onClick={() => handleSubscribeClick('monthly')}
+                            disabled={!!isLoading}
+                            className="w-full py-3 bg-cyan-500 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-cyan-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20"
+                        >
+                            {isLoading === 'monthly' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                            {isLoading === 'monthly' ? 'Processing...' : 'Go Unlimited'}
+                        </button>
                     </div>
                 </div>
 
-                <div className="relative z-10 space-y-4">
-                    <div className="text-center mb-6">
-                        <span className="text-4xl font-black tracking-tighter">$10.00</span>
-                        <span className="text-neutral-400 font-bold uppercase text-xs tracking-wider"> / Month</span>
-                    </div>
-
-                    <button 
-                        onClick={handleSubscribeClick}
-                        disabled={isLoading || isRestoring}
-                        className="w-full py-4 bg-black text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 group"
-                    >
-                         {isLoading ? (
-                            <>
-                                <Loader2 className="w-4 h-4 animate-spin" /> Redirecting...
-                            </>
-                         ) : (
-                            <>
-                                <CreditCard className="w-4 h-4" /> Subscribe via PayPal <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                            </>
-                         )}
-                    </button>
-
-                    <button 
-                        onClick={handleRestorePurchase}
-                        disabled={isLoading || isRestoring}
-                        className="w-full py-3 bg-neutral-100 text-neutral-500 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2"
-                    >
-                         {isRestoring ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
-                         {isRestoring ? 'Checking...' : 'Already Subscribed? Check Status'}
-                    </button>
-                    
-                    <p className="text-center text-[10px] text-neutral-400 font-medium px-4">
-                        Secure payments processed by PayPal. You can cancel anytime.
-                    </p>
-                </div>
+                <p className="text-center text-[10px] text-neutral-400 font-medium px-4 relative z-10">
+                    Secure payments processed by Stripe. Cancel monthly anytime.
+                </p>
             </div>
         </div>
     );

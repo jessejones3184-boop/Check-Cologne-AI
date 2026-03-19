@@ -1,19 +1,32 @@
 
+declare global {
+  interface Window {
+    aistudio?: {
+      hasSelectedApiKey: () => Promise<boolean>;
+      openSelectKey: () => Promise<void>;
+    };
+  }
+}
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  picture: string;
+  scansRemaining: number;
+  isSubscribed: boolean;
+}
+
 export type Verdict = 'AUTHENTIC' | 'REPLICA' | 'INCONCLUSIVE';
 
 export interface AuthDetails {
-  brand: string;
-  model: string;
-  collection: string;
-  specificType: string;
-  concentration: string;
-  volume: string;
+  itemName: string;
   verdict: Verdict;
   confidence: number;
   reasoning: string;
   analysisPoints: {
-    atomizer: 'PASS' | 'FAIL' | 'FLAGGED';
-    glassQuality: 'PASS' | 'FAIL' | 'FLAGGED';
+    branding: 'PASS' | 'FAIL' | 'FLAGGED';
+    buildQuality: 'PASS' | 'FAIL' | 'FLAGGED';
     packaging: 'PASS' | 'FAIL' | 'FLAGGED';
   };
   batchCodeValue?: string;
@@ -26,9 +39,7 @@ export interface VerificationSession {
   id: string;
   timestamp: number;
   name: string;
-  brand: string;
-  collection: string;
-  specificType: string;
+  itemName: string;
   userImages: string[];
   reportImage: string;
   details: AuthDetails;
